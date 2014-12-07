@@ -3,12 +3,8 @@ local try = require "try"
 local function _protect(co, status, ...)
   if not status then
     local msg = ...
-    if type(msg) == 'table' then
-      local k, v = next(msg)
-      if k == try.NIL then
-        if v == try.NIL then v = nil end
-        return nil, v
-      end
+    if try.is_try_error(msg) then
+      return nil, msg[1]
     end
     return error(msg, 0)
   end
