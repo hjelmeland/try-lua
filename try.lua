@@ -2,6 +2,7 @@
     which again is based on luasockets newtry, protect and try functions.
     Passes unittest of lua-try.
     fix_return_values() trick taken from http://lua-users.org/wiki/FinalizedExceptions
+    License: MIT. Egil Hjelmeland.
 ]]
 
 local error,getmetatable,pcall,setmetatable
@@ -23,11 +24,12 @@ local function newtry (finalizer)
 end
 
 local function fix_return_values(ok, ...)
-	if ok then return ... end    
-	if getmetatable (...) == try_error_mt then -- is_try_error(...)
-		return nil, (...)[1] -- return idiomatic nil, error
+	if ok then return ... end
+	local msg = ...
+	if getmetatable (msg) == try_error_mt then -- is_try_error(...)
+		return nil, msg[1] -- return idiomatic nil, error
 	end
-	error((...), 0) -- pass non-try error
+	error(msg, 0) -- pass non-try error
 end
 
 local function protect(f)
